@@ -15,10 +15,10 @@ module Fetcher
   end
 
   def self.redis_connection
-  	@redis_connection ||= Redis.new
+    @redis_connection ||= Redis.new
   end
 
   def self.redis_connection=(conn)
-  	@redis_connection = conn
+    @redis_connection = conn
   end
 end
