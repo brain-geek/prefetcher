@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Fetcher::VERSION
   spec.authors       = ["Alex Rozumiy"]
   spec.email         = ["brain-geek@yandex.ua"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Prefetching/caching tool for external requests}
+  spec.description   = %q{This gem provides possibility to have 'fresh' prefetched result of external http request all the time}
   spec.homepage      = ""
   spec.license       = "MIT"
 
