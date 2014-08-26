@@ -16,6 +16,12 @@ Or install it yourself as:
 
     $ gem install fetcher
 
+After installing gem you should specify redis connection (only if not using default localhost:6379 ):
+	
+	Fetcher.redis_connection = Redis.new(:host => "10.0.1.1", :port => 6380, :db => 15)
+
+See [redis gem documentation](https://github.com/redis/redis-rb#getting-started) for more options when creating redis connection.
+	
 ## Usage
 
 TODO: Write usage instructions here
