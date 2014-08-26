@@ -8,9 +8,9 @@ require "fetcher/http_memoizer"
 require "fetcher/version"
 
 module Fetcher
-  def self.update_all
-    HttpMemoizer.get_list.each do |url|
-      HttpFetcher.new(url: url).fetch
+  def self.update_all(options = {})
+    HttpMemoizer.new(options).get_list.each do |url|
+      HttpFetcher.new(options.merge(url: url)).fetch
     end
   end
 
