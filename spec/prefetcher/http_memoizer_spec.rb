@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fetcher::HttpMemoizer do
+describe Prefetcher::HttpMemoizer do
   describe "#get_list" do
     let(:memoizer) { described_class.new }
     subject { memoizer.get_list }

@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fetcher/version'
+require 'prefetcher/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "fetcher"
-  spec.version       = Fetcher::VERSION
+  spec.name          = "prefetcher"
+  spec.version       = Prefetcher::VERSION
   spec.authors       = ["Alex Rozumiy"]
   spec.email         = ["brain-geek@yandex.ua"]
   spec.summary       = %q{Prefetching/caching tool for external requests}

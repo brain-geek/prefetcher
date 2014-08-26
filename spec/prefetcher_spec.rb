@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fetcher do
+describe Prefetcher do
   describe "redis connection accessors" do
     it "returns previously set connection" do
       described_class.redis_connection = (conn = double("Redis"))
@@ -27,12 +27,12 @@ describe Fetcher do
                      [{:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]}])
 
-        obj = Fetcher::HttpFetcher.new(url: url)
+        obj = Prefetcher::HttpFetcher.new(url: url)
 
         expect(obj.get).to eq "1"
         expect(obj.get).to eq "1"
 
-        Fetcher.update_all
+        described_class.update_all
 
         expect(obj.get).to eq "2"
     end

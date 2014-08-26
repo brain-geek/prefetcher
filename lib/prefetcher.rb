@@ -2,12 +2,12 @@ require "redis"
 require "active_support/core_ext/string/output_safety"
 require "active_support/core_ext/hash/except"
 
-require "fetcher/http_fetcher"
-require "fetcher/http_memoizer"
+require "prefetcher/http_fetcher"
+require "prefetcher/http_memoizer"
 
-require "fetcher/version"
+require "prefetcher/version"
 
-module Fetcher
+module Prefetcher
   def self.update_all(options = {})
     HttpMemoizer.new(options).get_list.each do |url|
       HttpFetcher.new(options.merge(url: url)).fetch

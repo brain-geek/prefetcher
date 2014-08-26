@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fetcher::HttpFetcher do
+describe Prefetcher::HttpFetcher do
   let(:redis_connection) { MockRedis.new }
 
   let(:default_params) { Hash[url: url, redis_connection: redis_connection] }
@@ -16,7 +16,7 @@ describe Fetcher::HttpFetcher do
     end
 
     it "uses default connection if not set explicitly" do
-      Fetcher.redis_connection = (connection = double('Redis'))
+      Prefetcher.redis_connection = (connection = double('Redis'))
       object = described_class.new(default_params.except(:redis_connection))
 
       expect(object.redis_connection).to be connection

@@ -1,9 +1,9 @@
-module Fetcher
+module Prefetcher
   class HttpMemoizer
     attr_reader :redis_connection
 
     def initialize(params = {})
-      @redis_connection = params.fetch(:redis_connection, Fetcher.redis_connection)
+      @redis_connection = params.fetch(:redis_connection, Prefetcher.redis_connection)
     end
 
     def push(url)
@@ -20,7 +20,7 @@ module Fetcher
     end
 
     def redis
-      Fetcher.redis_connection
+      Prefetcher.redis_connection
     end
   end
 end
