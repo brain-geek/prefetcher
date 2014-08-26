@@ -7,3 +7,5 @@ gem 'rspec'
 
 gem 'pry'
 gem 'pry-nav'
+
+gem "codeclimate-test-reporter", group: :test, require: nil

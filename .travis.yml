@@ -1,0 +1,18 @@
+language: ruby
+
+addons:
+  code_climate:
+    repo_token: 70a2bf5144efe4a18987f186b76cb8ab8fd9b93889b5adeb49669d85778d9168
+
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.1
+  - 2.1.2
+  - rbx-2.2.6
+  - jruby
+
+matrix:
+  allow_failures: 
+    - rvm: rbx-2.2.6
+    - rvm: jruby
