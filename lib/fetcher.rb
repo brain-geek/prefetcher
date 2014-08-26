@@ -2,15 +2,15 @@ require "redis"
 require "active_support/core_ext/string/output_safety"
 require "active_support/core_ext/hash/except"
 
-require "fetcher/fetcher"
-require "fetcher/url_memoizer"
+require "fetcher/http_fetcher"
+require "fetcher/http_memoizer"
 
 require "fetcher/version"
 
 module Fetcher
   def self.update_all
-    UrlMemoizer.get_list.each do |url|
-      Fetcher.new(url: url).fetch
+    HttpMemoizer.get_list.each do |url|
+      HttpFetcher.new(url: url).fetch
     end
   end
 

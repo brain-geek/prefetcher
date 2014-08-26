@@ -1,11 +1,11 @@
 module Fetcher
-  class Fetcher
+  class HttpFetcher
     attr_reader :url, :redis_connection, :memoizer
 
     def initialize(params = {})
       @url = params.fetch(:url)
-      @redis_connection = params.fetch(:redis_connection, ::Fetcher.redis_connection)
-      @memoizer = params.fetch(:memoizer, UrlMemoizer.new(redis_connection: @redis_connection))
+      @redis_connection = params.fetch(:redis_connection, Fetcher.redis_connection)
+      @memoizer = params.fetch(:memoizer, HttpMemoizer.new(redis_connection: @redis_connection))
     end
 
     def fetch

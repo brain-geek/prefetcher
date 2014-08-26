@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Fetcher::Fetcher do
+describe Fetcher::HttpFetcher do
   let(:redis_connection) { MockRedis.new }
 
   let(:default_params) { Hash[url: url, redis_connection: redis_connection] }
