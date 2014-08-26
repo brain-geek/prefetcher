@@ -8,6 +8,7 @@ module Prefetcher
       @memoizer = params.fetch(:memoizer, HttpMemoizer.new(redis_connection: @redis_connection))
     end
 
+    # Makes request to given URL
     def fetch
       uri = URI(URI.encode(self.url))
 
@@ -24,6 +25,7 @@ module Prefetcher
       end
     end
 
+    # Returns cached version if availible. If not cached - makes request using #fetch .
     def get
       (get_from_memory || fetch).html_safe.force_encoding('utf-8')
     end

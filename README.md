@@ -3,7 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/brain-geek/prefetcher/badges/gpa.svg)](https://codeclimate.com/github/brain-geek/prefetcher)
 [![Test Coverage](https://codeclimate.com/github/brain-geek/prefetcher/badges/coverage.svg)](https://codeclimate.com/github/brain-geek/prefetcher)
 
-This gem provides a simple-to-use interface to work with frequently requested http requests from your api. It gets request response from memory, if possible. But also this means you have to update this cache from time to time (using [whenever](https://github.com/javan/whenever), for example). Any kind of non-200 responses will not be memoized, so you can be always sure that you don't use broken data. Redis is used to store data.
+This gem provides a simple-to-use interface to work with frequently requested http requests from your api. It gets request response from memory, if possible. But also this means you have to update this cache from time to time (using [whenever](https://github.com/javan/whenever), for example). Any kind of non-200 responses will not be memoized, so you can be always sure that you don't use broken data. Redis is used to store data. [RDoc](http://rdoc.info/github/brain-geek/prefetcher/master/frames)
 
 ## Installation
 
@@ -27,11 +27,15 @@ See [redis gem documentation](https://github.com/redis/redis-rb#getting-started)
     
 ## Usage
 
+### Using cached requests
+
 After installing project you can request any URL:
     
     Prefetcher::HttpPrefetcher.new('http://www.reddit.com/r/ruby').get
 
 Calling #get any number of times will return data from cache.
+
+### Force get
 
 If you want to force request (and save the response), you can call #fetch:
 
@@ -39,7 +43,7 @@ If you want to force request (and save the response), you can call #fetch:
 
 This will cause actual http request.
 
-#### Updating cache
+### Updating cache
 
 Calling manualy. You can call *Prefetcher.update_all* to fetch all URLs right now.
 

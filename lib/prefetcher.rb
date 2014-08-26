@@ -8,6 +8,8 @@ require "prefetcher/http_memoizer"
 require "prefetcher/version"
 
 module Prefetcher
+
+  # Updates all memoized requests
   def self.update_all(options = {})
     HttpMemoizer.new(options).get_list.each do |url|
       HttpFetcher.new(options.merge(url: url)).fetch
