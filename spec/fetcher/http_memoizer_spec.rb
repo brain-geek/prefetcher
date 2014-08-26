@@ -10,10 +10,12 @@ describe Fetcher::HttpMemoizer do
     end
 
     it "returns the url once, even if it was memorized multiple times" do
-      memoizer.push 'http://noslowpokes.com'
-      memoizer.push 'http://noslowpokes.com'
+      url = Faker::Internet.http_url
 
-      expect(subject).to eq ['http://noslowpokes.com']
+      memoizer.push url
+      memoizer.push url
+
+      expect(subject).to eq [url]
     end
 
     it "returns all given urls" do

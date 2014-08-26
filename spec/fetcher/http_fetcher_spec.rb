@@ -7,7 +7,7 @@ describe Fetcher::HttpFetcher do
   let(:params) { default_params }
   let(:object) { described_class.new(params) }
 
-  let(:url) { 'http://linux.org.ru/sdfdsfdsf/qweqewe/sdfsrerw' }
+  let(:url) { Faker::Internet.http_url }
   let(:request_body) { Faker::HTMLIpsum.ul_short }
 
   describe "#initialize" do
