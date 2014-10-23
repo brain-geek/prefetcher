@@ -23,9 +23,9 @@ describe Prefetcher do
     let(:url) { Faker::Internet.http_url }
 
     it "should update data in HttpFetcher fetched URLs" do
-        FakeWeb.register_uri(:get, url,
-                     [{:body => "1", :status => ["200", "OK"]},
-                      {:body => "2", :status => ["200", "OK"]}])
+        stub_request(:get, url).to_return(
+                      {:body => "1", :status => ["200", "OK"]},
+                      {:body => "2", :status => ["200", "OK"]})
 
         obj = Prefetcher::HttpFetcher.new(url: url)
 

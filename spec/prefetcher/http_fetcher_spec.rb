@@ -20,17 +20,17 @@ describe Prefetcher::HttpFetcher do
     subject { object.fetch }
 
     describe "200 response" do
-      before { FakeWeb.register_uri(:get, url, :body => request_body) }
+      before { stub_request(:get, url).to_return(:body => request_body) }
 
       it "gets data from real world http query" do
         expect(subject).to eq request_body
       end
 
       it "makes http requests the same number of times as called" do
-        FakeWeb.register_uri(:get, url,
-                     [{:body => "1", :status => ["200", "OK"]},
+        stub_request(:get, url).to_return(
+                      {:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]},
-                      {:body => "3", :status => ["200", "OK"]}])
+                      {:body => "3", :status => ["200", "OK"]})
 
         expect(object.fetch).to eq "1"
         expect(object.fetch).to eq "2"
@@ -46,7 +46,7 @@ describe Prefetcher::HttpFetcher do
 
     describe "500 response" do
       before do
-        FakeWeb.register_uri(:get, url, body: request_body, status: ["500", "Internal Server Error"])
+        stub_request(:get, url).to_return(body: request_body, status: 500)
       end
 
       it "returns empty string" do
@@ -61,7 +61,7 @@ describe Prefetcher::HttpFetcher do
 
     describe "404 response" do
       before do
-        FakeWeb.register_uri(:get, url, body: request_body, status: ["404", "Not Found"])
+        stub_request(:get, url).to_return(body: request_body, status: 404)
       end
 
       it "returns empty string" do

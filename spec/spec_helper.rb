@@ -6,6 +6,8 @@ CodeClimate::TestReporter.start
 
 require 'prefetcher'
 
+require 'webmock/rspec'
+
 Bundler.require
 
 # Disabling old rspec should syntax
