@@ -1,11 +1,10 @@
 module Prefetcher
   class HttpFetcher
-    attr_reader :url, :redis_connection, :memoizer
+    attr_reader :url, :memoizer
 
     def initialize(params = {})
       @url = params.fetch(:url)
-      @redis_connection = params.fetch(:redis_connection, Prefetcher.redis_connection)
-      @memoizer = params.fetch(:memoizer, HttpMemoizer.new(redis_connection: @redis_connection))
+      @memoizer = params.fetch(:memoizer, HttpMemoizer.new)
     end
 
     # Makes request to given URL
@@ -31,17 +30,12 @@ module Prefetcher
     end
 
     protected
-    def cache_key
-      "cached-url-#{url}"
-    end
-
     def get_from_memory
-      @redis_connection.get(cache_key)
+      memoizer.get(url)
     end
 
     def memoize(response)
-      memoizer.push(url)
-      @redis_connection.set(cache_key, response)
+      memoizer.set(url, response)
     end
   end
 end
