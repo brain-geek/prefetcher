@@ -13,8 +13,10 @@ require "prefetcher/version"
 module Prefetcher
   # Updates all memoized requests
   def self.update_all(options = {})
+    pool = HttpRequester.pool
+    
     HttpMemoizer.new(options).get_list.map do |fetcher|
-      fetcher.fetch_async
+      fetcher.fetch_async(pool)
     end.map(&:value)
 
     true

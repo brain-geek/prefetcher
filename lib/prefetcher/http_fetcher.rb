@@ -8,8 +8,8 @@ module Prefetcher
     end
 
     # Makes request to given URL in async way
-    def fetch_async
-      HttpRequester.new(url, memoizer).future(:fetch)
+    def fetch_async(worker = HttpRequester.new)
+      worker.future(:fetch, url, memoizer)
     end
 
     def fetch
