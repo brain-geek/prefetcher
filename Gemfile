@@ -8,7 +8,7 @@ gem 'mock_redis'
 gem 'rspec'
 
 gem 'ffaker'
-gem 'fakeweb'
+gem 'webmock'
 gem 'pry'
 gem 'pry-nav'
 

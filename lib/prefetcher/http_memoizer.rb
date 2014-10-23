@@ -1,28 +1,33 @@
 module Prefetcher
   class HttpMemoizer
-    attr_reader :redis_connection
+    attr_accessor :redis_connection
 
     def initialize(params = {})
-      @redis_connection = params.fetch(:redis_connection, Prefetcher.redis_connection)
+      self.redis_connection = params.fetch(:redis_connection, Prefetcher.redis_connection)
     end
 
-    # Add URL to memoized list
-    def push(url)
-      redis.sadd(cache_key, url)
+    # Save and add URL to memoized list
+    def set(url, value)
+      redis_connection.set(url, value)
+      redis_connection.sadd(items_list, url)
+    end
+
+    def get(url)
+      redis_connection.get(url)
     end
 
     # Get all memoized URLs
     def get_list
-      redis.smembers cache_key
+      redis_connection.smembers(items_list).map{|url| HttpFetcher.new(memoizer: self, url: url) }
     end
 
     protected 
-    def cache_key
-      "urls-list"
+    def cache_key(url)
+      "cached-url-#{url}"
     end
 
-    def redis
-      Prefetcher.redis_connection
+    def items_list
+      "urls-list"
     end
   end
 end

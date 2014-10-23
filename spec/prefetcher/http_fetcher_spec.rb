@@ -14,31 +14,23 @@ describe Prefetcher::HttpFetcher do
     it "fails if no url given" do
       expect { described_class.new(default_params.except(:url)).to raise_error }
     end
-
-    it "uses default connection if not set explicitly" do
-      Prefetcher.redis_connection = (connection = double('Redis'))
-      object = described_class.new(default_params.except(:redis_connection))
-
-      expect(object.redis_connection).to be connection
-      expect(object.memoizer.redis_connection).to be connection
-    end
   end
 
   describe "#fetch" do
     subject { object.fetch }
 
     describe "200 response" do
-      before { FakeWeb.register_uri(:get, url, :body => request_body) }
+      before { stub_request(:get, url).to_return(:body => request_body) }
 
       it "gets data from real world http query" do
         expect(subject).to eq request_body
       end
 
       it "makes http requests the same number of times as called" do
-        FakeWeb.register_uri(:get, url,
-                     [{:body => "1", :status => ["200", "OK"]},
+        stub_request(:get, url).to_return(
+                      {:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]},
-                      {:body => "3", :status => ["200", "OK"]}])
+                      {:body => "3", :status => ["200", "OK"]})
 
         expect(object.fetch).to eq "1"
         expect(object.fetch).to eq "2"
@@ -46,25 +38,15 @@ describe Prefetcher::HttpFetcher do
         expect(object.fetch).to eq "3" # fakeweb feature - when no more responces, it uses last
       end
 
-      describe "saves output to redis" do
-        it "to corresponding key" do
-          expect(redis_connection.get("cached-url-#{url}")).to be_nil
-
-          subject
-
-          expect(redis_connection.get("cached-url-#{url}")).to eq request_body
-        end
-      end
-
-      it "also pushes given url to url_memoizer" do
-        expect(object.memoizer).to receive(:push).with(url)
+      it "saves given url to url_memoizer" do
+        expect(object.memoizer).to receive(:set).with(url, request_body)
         subject
       end
     end
 
     describe "500 response" do
       before do
-        FakeWeb.register_uri(:get, url, body: request_body, status: ["500", "Internal Server Error"])
+        stub_request(:get, url).to_return(body: request_body, status: 500)
       end
 
       it "returns empty string" do
@@ -79,7 +61,7 @@ describe Prefetcher::HttpFetcher do
 
     describe "404 response" do
       before do
-        FakeWeb.register_uri(:get, url, body: request_body, status: ["404", "Not Found"])
+        stub_request(:get, url).to_return(body: request_body, status: 404)
       end
 
       it "returns empty string" do
@@ -116,7 +98,7 @@ describe Prefetcher::HttpFetcher do
     describe "when there is data in cache" do
       before do
         expect(object).to_not receive(:fetch)
-        redis_connection.set("cached-url-#{url}", request_body)
+        object.memoizer.set(url, request_body)
       end
 
       it "returns data only from cache" do
