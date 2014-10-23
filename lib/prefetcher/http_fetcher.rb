@@ -16,10 +16,6 @@ module Prefetcher
       fetch_async.value
     end
 
-    def get_from_memory
-      @redis_connection.get(cache_key)
-    end
-
     # Returns cached version if availible. If not cached - makes request using #fetch .
     def get
       (get_from_memory || fetch).html_safe.force_encoding('utf-8')
