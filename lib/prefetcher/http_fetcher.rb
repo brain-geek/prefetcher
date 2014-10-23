@@ -7,21 +7,17 @@ module Prefetcher
       @memoizer = params.fetch(:memoizer, HttpMemoizer.new)
     end
 
-    # Makes request to given URL
+    # Makes request to given URL in async way
+    def fetch_async
+      HttpRequester.new(url, memoizer).future(:fetch)
+    end
+
     def fetch
-      uri = URI(URI.encode(self.url))
+      fetch_async.value
+    end
 
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-
-      response = http.request(request)
-
-      if response.code == "200"
-        memoize(response.body)
-        response.body
-      else
-        ''
-      end
+    def get_from_memory
+      @redis_connection.get(cache_key)
     end
 
     # Returns cached version if availible. If not cached - makes request using #fetch .
