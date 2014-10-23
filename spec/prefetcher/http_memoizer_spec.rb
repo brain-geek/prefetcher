@@ -49,7 +49,12 @@ describe Prefetcher::HttpMemoizer do
       memoizer.set url, 'asd'
       memoizer.set url, 'asd'
 
-      expect(subject).to eq [url]
+      expect(subject.length).to eq(1)
+      target = subject.first
+
+      expect(target).to be_a_kind_of Prefetcher::HttpFetcher
+      expect(target.url).to eq url
+      expect(target.memoizer).to be(memoizer)
     end
 
     it "returns all given urls" do
@@ -59,7 +64,7 @@ describe Prefetcher::HttpMemoizer do
         memoizer.set url, 'asd'
       end
 
-      expect(subject.sort).to eq urls.sort
+      expect(subject.map(&:url).sort).to eq urls.sort
     end
   end
 end

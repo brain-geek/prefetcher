@@ -18,7 +18,7 @@ module Prefetcher
 
     # Get all memoized URLs
     def get_list
-      redis_connection.smembers items_list
+      redis_connection.smembers(items_list).map{|url| HttpFetcher.new(memoizer: self, url: url) }
     end
 
     protected 
