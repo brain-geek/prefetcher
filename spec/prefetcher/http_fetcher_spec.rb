@@ -2,12 +2,13 @@ require 'spec_helper'
 
 describe Prefetcher::HttpFetcher do
   let(:redis_connection) { MockRedis.new }
+  let(:worker_class) { Prefetcher::HttpRequester }
+  let(:worker_params) { Hash[url: Faker::Internet.http_url] }
 
-  let(:default_params) { Hash[url: url, redis_connection: redis_connection] }
+  let(:default_params) { Hash[worker_class: worker_class, redis_connection: redis_connection] }
   let(:params) { default_params }
   let(:object) { described_class.new(params) }
 
-  let(:url) { Faker::Internet.http_url }
   let(:request_body) { Faker::HTMLIpsum.ul_short }
 
   describe "#initialize" do
@@ -17,100 +18,76 @@ describe Prefetcher::HttpFetcher do
   end
 
   describe "#fetch" do
-    subject { object.fetch }
+    subject { object.fetch(worker_params) }
 
-    describe "200 response" do
-      before { stub_request(:get, url).to_return(:body => request_body) }
+    describe "when fetcher returns something non-nil" do
+      before do
+        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
+      end
+
+      it "returns data from returned" do
+        expect(subject).to eq request_body
+      end
+
+      it "saves returned data to url_memoizer" do
+        subject
+        expect(object.memoizer.get(worker_class, worker_params)).to eq(request_body)
+      end
+    end
+
+    describe "when fetcher returns nil (something bad happened)" do
+      before do
+        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return nil
+      end
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+
+      it "does not write this to cache" do
+        subject
+        expect(object.memoizer.get(worker_class, worker_params)).to be_nil
+      end
+    end
+
+    context "integration - 200" do
+      before { stub_request(:get, worker_params[:url]).to_return(:body => request_body) }
 
       it "gets data from real world http query" do
         expect(subject).to eq request_body
       end
-
-      it "makes http requests the same number of times as called" do
-        stub_request(:get, url).to_return(
-                      {:body => "1", :status => ["200", "OK"]},
-                      {:body => "2", :status => ["200", "OK"]},
-                      {:body => "3", :status => ["200", "OK"]})
-
-        expect(object.fetch).to eq "1"
-        expect(object.fetch).to eq "2"
-        expect(object.fetch).to eq "3"
-        expect(object.fetch).to eq "3" # fakeweb feature - when no more responces, it uses last
-      end
-
-      it "saves given url to url_memoizer" do
-        expect(object.memoizer).to receive(:set).with(url, request_body)
-        subject
-      end
     end
 
-    describe "500 response" do
-      before do
-        stub_request(:get, url).to_return(body: request_body, status: 500)
-      end
+    context "integration - 500" do
+      before { stub_request(:get, worker_params[:url]).to_return(body: request_body, status: 500) } 
 
-      it "returns empty string" do
-        expect(subject).to be_empty
-      end
-
-      it "does not write this to cache" do
-        subject
-        expect(redis_connection.get("cached-url-#{url}")).to be_nil
-      end
-    end
-
-    describe "404 response" do
-      before do
-        stub_request(:get, url).to_return(body: request_body, status: 404)
-      end
-
-      it "returns empty string" do
-        expect(subject).to be_empty
-      end
-
-      it "does not write this to cache" do
-        subject
-        expect(redis_connection.get("cached-url-#{url}")).to be_nil
+      it "returns nil" do
+        expect(subject).to be_nil
       end
     end
   end
 
   describe "#get" do
     let(:request_body) { Faker::HTMLIpsum.ul_short.force_encoding('US-ASCII') } # real-world case with encoding
-    subject { object.get }
+    subject { object.get(worker_params) }
 
-    describe "when no data already present in cache" do
-      before { expect(object).to receive(:fetch).and_return(request_body) }
+    describe "when no data present in cache" do
+      before do
+        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
+      end
 
       it "calls #fetch" do
         expect(subject).to eq request_body
-      end
-
-      it "returns html safe value" do
-        expect(subject).to be_html_safe
-      end
-
-      it "returns utf-8 encoded string" do
-        expect(subject.encoding.to_s).to eq "UTF-8"
       end
     end
 
     describe "when there is data in cache" do
       before do
-        expect(object).to_not receive(:fetch)
-        object.memoizer.set(url, request_body)
+        object.memoizer.set(worker_class, worker_params, request_body)
       end
 
-      it "returns data only from cache" do
+      it "returns data from cache" do
         expect(subject).to eq request_body
-      end
-
-      it "returns html safe value" do
-        expect(subject).to be_html_safe
-      end
-
-      it "returns utf-8 encoded string" do
-        expect(subject.encoding.to_s).to eq "UTF-8"
       end
     end
   end

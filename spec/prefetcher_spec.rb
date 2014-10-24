@@ -21,20 +21,24 @@ describe Prefetcher do
 
   describe "::update_all" do
     let(:url) { Faker::Internet.http_url }
+    before do
+      Prefetcher.redis_connection = Redis.new
+      Prefetcher::HttpMemoizer.new.clear_list
+    end
 
     it "should update data in HttpFetcher fetched URLs" do
         stub_request(:get, url).to_return(
                       {:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]})
 
-        obj = Prefetcher::HttpFetcher.new(url: url)
+        obj = Prefetcher::HttpFetcher.new(worker_class: Prefetcher::HttpRequester)
 
-        expect(obj.get).to eq "1"
-        expect(obj.get).to eq "1"
+        expect(obj.get(url: url)).to eq "1"
+        expect(obj.get(url: url)).to eq "1"
 
         described_class.update_all
 
-        expect(obj.get).to eq "2"
+        expect(obj.get(url: url)).to eq "2"
     end
   end
 end
