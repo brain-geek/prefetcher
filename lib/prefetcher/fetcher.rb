@@ -1,6 +1,5 @@
 module Prefetcher
   class Fetcher
-    include Celluloid
     attr_reader :memoizer, :data_source
 
     def initialize(params = {})

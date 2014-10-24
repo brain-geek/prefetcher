@@ -1,5 +1,5 @@
 require "redis"
-require 'celluloid'
+require "thread/pool"
 
 require "active_support/core_ext/string/output_safety"
 require "active_support/core_ext/hash/except"
@@ -17,17 +17,16 @@ require "prefetcher/version"
 module Prefetcher
   # Updates all memoized requests
   def self.update_all(options = {})
-    
     Memoizer.new(options).get_list.map do |data_source, arguments|
-      pool = Fetcher.pool(args: [data_source: data_source])
+      pool = Thread.pool(8)
 
       arguments.map do |arg_set|
-        pool.async.force_fetch(arg_set)
+        pool.process {
+          fetcher = Fetcher.new(data_source: data_source).force_fetch(arg_set)
+        }
       end
 
-      unless pool.idle_size == pool.size
-        sleep 0.0001
-      end
+      pool.shutdown
     end
 
     true
