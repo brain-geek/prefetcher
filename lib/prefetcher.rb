@@ -19,8 +19,8 @@ module Prefetcher
       pool = HttpFetcher.pool(args: [worker_class: worker_class])
 
       arguments.map do |arg_set|
-        pool.future(:fetch, arg_set)
-      end.map(&:value)
+        pool.async.fetch(arg_set)
+      end
 
       unless pool.idle_size == pool.size
         sleep 0.0001
