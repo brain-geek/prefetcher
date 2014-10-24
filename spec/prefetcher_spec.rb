@@ -26,12 +26,12 @@ describe Prefetcher do
       Prefetcher::Memoizer.new.clear_list
     end
 
-    it "should update data in HttpFetcher fetched URLs" do
+    it "should update data in Fetcher fetched URLs" do
         stub_request(:get, url).to_return(
                       {:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]})
 
-        obj = Prefetcher::HttpFetcher.new(worker_class: Prefetcher::HttpRequester)
+        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
 
         expect(obj.get(url: url)).to eq "1"
         expect(obj.get(url: url)).to eq "1"

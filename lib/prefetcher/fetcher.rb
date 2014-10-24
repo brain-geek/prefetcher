@@ -1,5 +1,5 @@
 module Prefetcher
-  class HttpFetcher
+  class Fetcher
     include Celluloid
     attr_reader :memoizer, :worker_class
 

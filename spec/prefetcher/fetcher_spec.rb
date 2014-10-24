@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Prefetcher::HttpFetcher do
+describe Prefetcher::Fetcher do
   let(:redis_connection) { MockRedis.new }
   let(:worker_class) { Prefetcher::HttpRequester }
   let(:worker_params) { Hash[url: Faker::Internet.http_url] }

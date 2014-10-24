@@ -8,7 +8,7 @@ require "active_support/core_ext/string/inflections"
 
 require "prefetcher/memoizer"
 require "prefetcher/http_requester"
-require "prefetcher/http_fetcher"
+require "prefetcher/fetcher"
 
 require "prefetcher/version"
 
@@ -17,7 +17,7 @@ module Prefetcher
   def self.update_all(options = {})
     
     Memoizer.new(options).get_list.map do |worker_class, arguments|
-      pool = HttpFetcher.pool(args: [worker_class: worker_class])
+      pool = Fetcher.pool(args: [worker_class: worker_class])
 
       arguments.map do |arg_set|
         pool.async.fetch(arg_set)
