@@ -20,7 +20,7 @@ module Prefetcher
       pool = Fetcher.pool(args: [worker_class: worker_class])
 
       arguments.map do |arg_set|
-        pool.async.fetch(arg_set)
+        pool.async.force_fetch(arg_set)
       end
 
       unless pool.idle_size == pool.size

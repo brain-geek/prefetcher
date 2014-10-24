@@ -18,7 +18,7 @@ describe Prefetcher::Fetcher do
   end
 
   describe "#fetch" do
-    subject { object.fetch(worker_params) }
+    subject { object.force_fetch(worker_params) }
 
     describe "when fetcher returns something non-nil" do
       before do

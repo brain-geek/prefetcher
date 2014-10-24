@@ -8,7 +8,7 @@ module Prefetcher
       @worker_class = params.fetch(:worker_class, HttpRequester)
     end
 
-    def fetch(params)
+    def force_fetch(params)
       params = params.with_indifferent_access
 
       result = worker_class.new(params).fetch
@@ -20,7 +20,7 @@ module Prefetcher
     def get(params)
       params = params.with_indifferent_access
 
-      get_from_memory(params) || fetch(params)
+      get_from_memory(params) || force_fetch(params)
     end
 
     protected

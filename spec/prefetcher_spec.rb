@@ -60,8 +60,7 @@ describe Prefetcher do
         expect(obj.get(url: url)).to eq "1"
         expect(obj.get(url: url)).to eq "1"
 
-        obj.fetch(url: url)
-
+        obj.force_fetch(url: url)
 
         expect(obj.get(url: url)).to eq "2"
 
