@@ -5,7 +5,7 @@ describe Prefetcher::Fetcher do
   let(:worker_class) { Prefetcher::HttpRequester }
   let(:worker_params) { Hash[url: Faker::Internet.http_url] }
 
-  let(:default_params) { Hash[worker_class: worker_class, redis_connection: redis_connection] }
+  let(:default_params) { Hash[data_source: worker_class, redis_connection: redis_connection] }
   let(:params) { default_params }
   let(:object) { described_class.new(params) }
 
@@ -22,7 +22,7 @@ describe Prefetcher::Fetcher do
 
     describe "when fetcher returns something non-nil" do
       before do
-        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
+        allow(object.data_source).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
       end
 
       it "returns data from returned" do
@@ -37,7 +37,7 @@ describe Prefetcher::Fetcher do
 
     describe "when fetcher returns nil (something bad happened)" do
       before do
-        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return nil
+        allow(object.data_source).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return nil
       end
 
       it "returns nil" do
@@ -73,7 +73,7 @@ describe Prefetcher::Fetcher do
 
     describe "when no data present in cache" do
       before do
-        allow(object.worker_class).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
+        allow(object.data_source).to receive_message_chain(:new, :fetch).with(worker_params).with(no_args).and_return request_body
       end
 
       it "calls #fetch" do

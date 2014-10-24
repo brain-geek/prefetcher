@@ -1,9 +1,7 @@
 module Prefetcher
-  class HttpRequester
-    attr_accessor :url
-
-    def initialize(hash = {})
-      self.url = hash.fetch(:url, false) || hash.fetch('url')
+  class HttpRequester < BaseRequester
+    def url
+      @url ||= (attributes.fetch(:url, false) || attributes.fetch('url'))
     end
 
     def fetch
@@ -18,10 +16,6 @@ module Prefetcher
       else
         nil
       end
-    end
-
-    def to_params
-      Hash[url: url]
     end
   end
 end

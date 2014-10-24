@@ -31,7 +31,7 @@ See [redis gem documentation](https://github.com/redis/redis-rb#getting-started)
 
 After installing project you can request any URL:
     
-    Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester).get(url: 'http://www.reddit.com/r/ruby')
+    Prefetcher::Fetcher.new(data_source: Prefetcher::HttpRequester).get(url: 'http://www.reddit.com/r/ruby')
 
 Calling #get any number of times will return data from cache.
 
@@ -39,7 +39,7 @@ Calling #get any number of times will return data from cache.
 
 If you want to force request (and save the response), you can call #force_fetch:
 
-    Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester).force_fetch(url: 'http://www.reddit.com/r/ruby')
+    Prefetcher::Fetcher.new(data_source: Prefetcher::HttpRequester).force_fetch(url: 'http://www.reddit.com/r/ruby')
 
 This will cause actual http request.
 

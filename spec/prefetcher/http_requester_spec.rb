@@ -50,18 +50,18 @@ describe Prefetcher::HttpRequester do
     end
   end
 
-  describe "#to_params" do
-    subject { object.to_params }
+  describe "#attributes" do
+    subject { object.attributes }
 
     it "returns the set of parameters received in ::new" do
-      expect(subject).to eq(url: url)
+      expect(subject[:url]).to eq(url)
     end
 
     describe "when url parameter is received as string key in hash" do
       let(:object) { described_class.new('url' => url) }
 
       it "returns the set of parameters received in ::new" do
-        expect(subject).to eq(url: url)
+        expect(subject[:url]).to eq(url)
       end
     end
   end

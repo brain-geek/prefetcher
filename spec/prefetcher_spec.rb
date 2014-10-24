@@ -31,7 +31,7 @@ describe Prefetcher do
                       {:body => "1", :status => ["200", "OK"]},
                       {:body => "2", :status => ["200", "OK"]})
 
-        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
+        obj = Prefetcher::Fetcher.new(data_source: Prefetcher::HttpRequester)
 
         expect(obj.get(url: url)).to eq "1"
         expect(obj.get(url: url)).to eq "1"
@@ -55,7 +55,7 @@ describe Prefetcher do
                       {:body => "2", :status => ["200", "OK"]},
                       {:body => "3", :status => ["200", "OK"]})
 
-        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
+        obj = Prefetcher::Fetcher.new(data_source: Prefetcher::HttpRequester)
 
         expect(obj.get(url: url)).to eq "1"
         expect(obj.get(url: url)).to eq "1"
@@ -64,7 +64,7 @@ describe Prefetcher do
 
         expect(obj.get(url: url)).to eq "2"
 
-        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
+        obj = Prefetcher::Fetcher.new(data_source: Prefetcher::HttpRequester)
 
         Prefetcher.update_all
 

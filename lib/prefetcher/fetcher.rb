@@ -1,17 +1,17 @@
 module Prefetcher
   class Fetcher
     include Celluloid
-    attr_reader :memoizer, :worker_class
+    attr_reader :memoizer, :data_source
 
     def initialize(params = {})
       @memoizer = params.fetch(:memoizer, Memoizer.new)
-      @worker_class = params.fetch(:worker_class, HttpRequester)
+      @data_source = params.fetch(:data_source)
     end
 
     def force_fetch(params)
       params = params.with_indifferent_access
 
-      result = worker_class.new(params).fetch
+      result = data_source.new(params).fetch
       memoize(params, result) unless result.nil?
       result
     end
@@ -28,11 +28,11 @@ module Prefetcher
     def get_from_memory(params)
       params = params.with_indifferent_access
 
-      memoizer.get(worker_class, params)
+      memoizer.get(data_source, params)
     end
 
     def memoize(params, result)
-      memoizer.set(worker_class, params, result)
+      memoizer.set(data_source, params, result)
     end
   end
 end
