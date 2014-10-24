@@ -41,4 +41,35 @@ describe Prefetcher do
         expect(obj.get(url: url)).to eq "2"
     end
   end
+
+  describe "integration" do
+    let(:url) { Faker::Internet.http_url }
+    before do
+      Prefetcher.redis_connection = Redis.new
+      Prefetcher::Memoizer.new.clear_list
+    end
+
+    it "should work within workflow with real Redis" do
+        stub_request(:get, url).to_return(
+                      {:body => "1", :status => ["200", "OK"]},
+                      {:body => "2", :status => ["200", "OK"]},
+                      {:body => "3", :status => ["200", "OK"]})
+
+        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
+
+        expect(obj.get(url: url)).to eq "1"
+        expect(obj.get(url: url)).to eq "1"
+
+        obj.fetch(url: url)
+
+
+        expect(obj.get(url: url)).to eq "2"
+
+        obj = Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester)
+
+        Prefetcher.update_all
+
+        expect(obj.get(url: url)).to eq "3"
+    end
+  end
 end
