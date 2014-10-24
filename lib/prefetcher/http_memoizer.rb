@@ -8,12 +8,12 @@ module Prefetcher
 
     # Save and add URL to memoized list
     def set(url, value)
-      redis_connection.set(url, value)
+      redis_connection.set(cache_key(url), value)
       redis_connection.sadd(items_list, url)
     end
 
     def get(url)
-      redis_connection.get(url)
+      redis_connection.get(cache_key(url))
     end
 
     # Get all memoized URLs
