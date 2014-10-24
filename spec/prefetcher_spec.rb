@@ -42,7 +42,7 @@ describe Prefetcher do
     end
   end
 
-  describe "integration" do
+  describe "workflow" do
     let(:url) { Faker::Internet.http_url }
     before do
       Prefetcher.redis_connection = Redis.new

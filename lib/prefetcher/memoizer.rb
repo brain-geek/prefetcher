@@ -8,14 +8,19 @@ module Prefetcher
 
     # Save and add URL to memoized list
     def set(worker_class, params, value)
-      redis_connection.set(cache_key(worker_class, params), value)
+      redis_connection.set(cache_key(worker_class, params), JSON.dump(value))
 
-      redis_connection.sadd(worker_classes_list, worker_class.to_s)
-      redis_connection.sadd(items_list(worker_class), JSON.dump(params))
+      push_to_lists(worker_class, params)
     end
 
     def get(worker_class, params)
-      redis_connection.get(cache_key(worker_class, params))
+      value = redis_connection.get(cache_key(worker_class, params))
+
+      if value
+        JSON.load(value)
+      else
+        value
+      end
     end
 
     # Get all memoized URLs
@@ -26,7 +31,7 @@ module Prefetcher
         worker_class = worker_class.constantize
 
         result[worker_class] = redis_connection.smembers(items_list(worker_class)).map do |params|
-          JSON.parse(params)
+          JSON.load(params)
         end
       end
 
@@ -36,7 +41,7 @@ module Prefetcher
     def clear_list
       redis_connection.smembers(worker_classes_list).each do |worker_class|
         redis_connection.smembers(items_list(worker_class)).each do |member|
-          redis_connection.del(cache_key(worker_class, JSON.parse(member)))
+          redis_connection.del(cache_key(worker_class, JSON.load(member)))
         end
 
         redis_connection.del(items_list(worker_class))
@@ -46,6 +51,12 @@ module Prefetcher
     end
 
     protected 
+
+    def push_to_lists(worker_class, params)
+      redis_connection.sadd(worker_classes_list, worker_class.to_s)
+      redis_connection.sadd(items_list(worker_class), JSON.dump(params))
+    end
+
     def cache_key(worker_class, params)
       params = params.with_indifferent_access
 

@@ -8,7 +8,7 @@ module Prefetcher
       @data_source = params.fetch(:data_source)
     end
 
-    def force_fetch(params)
+    def force_fetch(params = {})
       params = params.with_indifferent_access
 
       result = data_source.new(params).fetch
@@ -17,7 +17,7 @@ module Prefetcher
     end
 
     # Returns cached version if availible. If not cached - makes request using #fetch .
-    def get(params)
+    def get(params = {})
       params = params.with_indifferent_access
 
       get_from_memory(params) || force_fetch(params)
