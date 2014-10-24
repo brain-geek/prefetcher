@@ -3,7 +3,8 @@ require 'celluloid'
 
 require "active_support/core_ext/string/output_safety"
 require "active_support/core_ext/hash/except"
-require 'active_support/core_ext/hash/indifferent_access'
+require "active_support/core_ext/hash/indifferent_access"
+require "active_support/core_ext/string/inflections"
 
 require "prefetcher/http_requester"
 require "prefetcher/http_memoizer"

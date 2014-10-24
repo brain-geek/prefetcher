@@ -23,7 +23,7 @@ module Prefetcher
       result = Hash.new
 
       redis_connection.smembers(worker_classes_list).each do |worker_class|
-        worker_class = Object.const_get(worker_class)
+        worker_class = worker_class.constantize
 
         result[worker_class] = redis_connection.smembers(items_list(worker_class)).map do |params|
           JSON.parse(params)
