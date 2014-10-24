@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Prefetcher::HttpMemoizer do
+describe Prefetcher::Memoizer do
 
   describe "#initialize" do
     context "redis connection" do

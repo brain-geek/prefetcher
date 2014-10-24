@@ -23,7 +23,7 @@ describe Prefetcher do
     let(:url) { Faker::Internet.http_url }
     before do
       Prefetcher.redis_connection = Redis.new
-      Prefetcher::HttpMemoizer.new.clear_list
+      Prefetcher::Memoizer.new.clear_list
     end
 
     it "should update data in HttpFetcher fetched URLs" do

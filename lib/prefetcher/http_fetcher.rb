@@ -4,7 +4,7 @@ module Prefetcher
     attr_reader :memoizer, :worker_class
 
     def initialize(params = {})
-      @memoizer = params.fetch(:memoizer, HttpMemoizer.new)
+      @memoizer = params.fetch(:memoizer, Memoizer.new)
       @worker_class = params.fetch(:worker_class, HttpRequester)
     end
 

@@ -6,8 +6,8 @@ require "active_support/core_ext/hash/except"
 require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/string/inflections"
 
+require "prefetcher/memoizer"
 require "prefetcher/http_requester"
-require "prefetcher/http_memoizer"
 require "prefetcher/http_fetcher"
 
 require "prefetcher/version"
@@ -16,7 +16,7 @@ module Prefetcher
   # Updates all memoized requests
   def self.update_all(options = {})
     
-    HttpMemoizer.new(options).get_list.map do |worker_class, arguments|
+    Memoizer.new(options).get_list.map do |worker_class, arguments|
       pool = HttpFetcher.pool(args: [worker_class: worker_class])
 
       arguments.map do |arg_set|

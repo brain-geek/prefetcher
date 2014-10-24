@@ -1,5 +1,5 @@
 module Prefetcher
-  class HttpMemoizer
+  class Memoizer
     attr_accessor :redis_connection
 
     def initialize(params = {})
