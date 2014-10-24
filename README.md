@@ -3,7 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/brain-geek/prefetcher/badges/gpa.svg)](https://codeclimate.com/github/brain-geek/prefetcher)
 [![Test Coverage](https://codeclimate.com/github/brain-geek/prefetcher/badges/coverage.svg)](https://codeclimate.com/github/brain-geek/prefetcher)
 
-This gem provides a simple-to-use interface to work with frequently requested http requests from your api. It gets request response from memory, if possible. But also this means you have to update this cache from time to time (using [whenever](https://github.com/javan/whenever), for example). Any kind of non-200 responses will not be memoized, so you can be always sure that you don't use broken data. Redis is used to store data. [RDoc](http://rdoc.info/github/brain-geek/prefetcher/master/frames)
+This gem provides a simple-to-use interface to work with frequently requested http data from your api. It gets request response from memory, if possible. But also this means you have to update this cache from time to time (using [whenever](https://github.com/javan/whenever), for example). Any kind of non-200 responses will not be memoized, so you can be always sure that you don't use broken data. Redis is used to store data. [RDoc](http://rdoc.info/github/brain-geek/prefetcher/master/frames)
 
 ## Installation
 
@@ -25,21 +25,21 @@ You can also override redis connection details (if not using default localhost:6
 
 See [redis gem documentation](https://github.com/redis/redis-rb#getting-started) for more options when creating redis connection.
     
-## Usage
+## Usage for fetching HTTP requests
 
 ### Using cached requests
 
 After installing project you can request any URL:
     
-    Prefetcher::HttpPrefetcher.new('http://www.reddit.com/r/ruby').get
+    Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester).get(url: 'http://www.reddit.com/r/ruby')
 
 Calling #get any number of times will return data from cache.
 
-### Force get
+### Force fetch
 
-If you want to force request (and save the response), you can call #fetch:
+If you want to force request (and save the response), you can call #force_fetch:
 
-    Prefetcher::HttpPrefetcher.new('http://www.reddit.com/r/ruby').fetch
+    Prefetcher::Fetcher.new(worker_class: Prefetcher::HttpRequester).force_fetch(url: 'http://www.reddit.com/r/ruby')
 
 This will cause actual http request.
 
@@ -47,7 +47,7 @@ This will cause actual http request.
 
 Calling manualy. You can call *Prefetcher.update_all* to fetch all URLs right now.
 
-You can also automate this call using [whenever](https://github.com/javan/whenever). Just add this code to your schedule.rb .
+You can also automate this call using [whenever](https://github.com/javan/whenever) or other library of your choice. Just add this code to your schedule.rb .
 
     every 30.minutes do
       runner "Prefetcher.update_all"
