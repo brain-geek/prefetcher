@@ -16,3 +16,6 @@ matrix:
   allow_failures: 
     - rvm: rbx-2.2.6
     - rvm: jruby
+
+services:
+  - redis-server
