@@ -35,6 +35,10 @@ module Prefetcher
 
     def clear_list
       redis_connection.smembers(worker_classes_list).each do |worker_class|
+        redis_connection.smembers(items_list(worker_class)).each do |member|
+          redis_connection.del(cache_key(worker_class, JSON.parse(member)))
+        end
+
         redis_connection.del(items_list(worker_class))
       end
 

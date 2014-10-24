@@ -69,17 +69,30 @@ describe Prefetcher::Memoizer do
 
       expect(subject[worker_class]).to match_array(urls.map{|url| Hash["url" => url]})
     end
+  end
 
-    it "#clear_list" do
+  describe "#clear_list" do
+    subject { memoizer.clear_list }
+
+    it "cleans get_list method result" do
       urls = 3.times.map { Faker::Internet.http_url }
 
       urls.each do |url|
         memoizer.set worker_class, {"url" =>  url}, 'asd'
       end
 
-      memoizer.clear_list
+      subject
 
-      expect(subject).to be_empty
+      expect(memoizer.get_list).to be_empty
+    end
+
+    it "clears values" do
+      memoizer.set worker_class, params, 'asd'
+      expect(memoizer.get(worker_class, params)).to_not be_nil
+
+      subject
+
+      expect(memoizer.get(worker_class, params)).to be_nil
     end
   end
 end
